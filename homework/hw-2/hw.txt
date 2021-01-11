@@ -1,0 +1,3 @@
+The sqlite database is taken from here https://www.kaggle.com/alexgude/california-traffic-collision-data-from-switrs.
+Probably it would be easier to take something else in csv to convert.
+Since type convertions were needed to store as sequenceFile and avro, to simplify the task, I took the table with two columns only - case_ids.
