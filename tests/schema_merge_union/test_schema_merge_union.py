@@ -21,6 +21,13 @@ def test_merge_schemas_simple(spark_session: SparkSession):
     )
     merger = SchemaMerging()
     result = merger.union(df1, df2)
+    """
+    My result is slightly different: columns order
+    [Row(id=0, product='potato', price='100', amount=None, weight='0.5'),
+    Row(id=1, product='onion', price='150', amount=None, weight='0.5'),
+    Row(id=2, product='CyberPunk2077', price='3000', amount=1, weight=None),
+    Row(id=3, product='TENET', price='2000', amount=1, weight=None)]
+    """
     assert result.collect() == [Row(id=0, product='potato', weight='0.5', price='100', amount=None),
                                 Row(id=1, product='onion', weight='0.5', price='150', amount=None),
                                 Row(id=2, product='CyberPunk2077', weight=None, price='3000', amount=1),
@@ -67,6 +74,15 @@ def test_merge_schemas_diff_types(spark_session: SparkSession):
     )
     merger = SchemaMerging()
     result = merger.union(df1, df2)
+    """
+    My result is slightly different:
+    [Row(id=0, product='potato', weight='0.5', price_string=None, price_bigint=100),
+    Row(id=1, product='onion', weight='0.5', price_string=None, price_bigint=150),
+    Row(id=2, product='apple', weight='1', price_string='300', price_bigint=None),
+    Row(id=3, product='pineapple', weight='1', price_string='200', price_bigint=None)]
+    
+    This is is more accurate in my opinion because it's not always possible to cast
+    """
     assert result.collect() == [Row(id=0, product='potato', weight='0.5', price_bigint='100', price_string=None),
                                 Row(id=1, product='onion', weight='0.5', price_bigint='150', price_string=None),
                                 Row(id=2, product='apple', weight='1', price_bigint='300', price_string=None),
@@ -90,6 +106,13 @@ def test_merge_schemas_no_common(spark_session: SparkSession):
     )
     merger = SchemaMerging()
     result = merger.union(df1, df2)
+    """
+    My result is slightly different: columns order
+    [Row(id=None, weight=None, product=None, price=None, uuid='uuid1', car='honda', mileage='50000'),
+    Row(id=None, weight=None, product=None, price=None, uuid='uuid2', car='toyota', mileage='60000'),
+    Row(id=2, weight='1', product='apple', price='300', uuid=None, car=None, mileage=None),
+    Row(id=3, weight='1', product='pineapple', price='200', uuid=None, car=None, mileage=None)]
+    """
     assert result.collect() == [Row(uuid='uuid1', car='honda', mileage='50000', id=None, product=None, weight=None, price=None),
                                 Row(uuid='uuid2', car='toyota', mileage='60000', id=None, product=None, weight=None, price=None),
                                 Row(uuid=None, car=None, mileage=None, id=2, product='apple', weight='1', price='300'),
