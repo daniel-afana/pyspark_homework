@@ -90,6 +90,15 @@ def test_history_product_one_key_nulls(spark_session: SparkSession):
     history_product = HistoryProduct(['id'])
 
     product = history_product.get_history_product(df_old, df_new)
+    """
+    My result
+    [Row(id=None, name='Ivan', score=None, meta='deleted'),
+    Row(id=None, name='Ivan', score=0.8, meta='inserted'),
+    Row(id=1, name='Maria', score=0.6, meta='not_changed'),
+    Row(id=2, name='Evgenii', score=0.4, meta='deleted'),
+    Row(id=3, name='Janus', score=0.8, meta='changed'),
+    Row(id=4, name='Lukas', score=0.7, meta='inserted')]
+    """
     assert product.collect() == [Row(id=None, name='Ivan', score=0.8, meta='changed'),
                                  Row(id=1, name='Maria', score=0.6, meta='not_changed'),
                                  Row(id=2, name='Evgenii', score=0.4, meta='deleted'),
@@ -152,6 +161,14 @@ def test_history_product_two_keys(spark_session: SparkSession):
     history_product = HistoryProduct(['id', 'name'])
 
     product = history_product.get_history_product(df_old, df_new)
+    """
+    My result
+    [Row(id=0, name='Ivan', score=0.8, meta='changed'),
+    Row(id=1, name='Maria', score=0.6, meta='not_changed'),
+    Row(id=2, name='Evgenii', score=0.4, meta='deleted'),
+    Row(id=3, name='Janus', score=0.8, meta='changed'),
+    Row(id=4, name='Lukas', score=0.7, meta='inserted')]
+    """
     assert product.collect() == [Row(id=0, name='Ivan', score=0.8, meta='changed'),
                                  Row(id=1, name='Maria', score=0.6, meta='not_changed'),
                                  Row(id=2, name='Evgenii', score=0.4, meta='deleted'),
@@ -184,6 +201,14 @@ def test_history_product_no_key(spark_session: SparkSession):
     history_product = HistoryProduct()
 
     product = history_product.get_history_product(df_old, df_new)
+    """
+    My result
+    [Row(id=0, name='Ivan', score=0.8, meta='changed'),
+    Row(id=1, name='Maria', score=0.6, meta='not_changed'),
+    Row(id=2, name='Evgenii', score=0.4, meta='deleted'),
+    Row(id=3, name='Janus', score=0.8, meta='changed'),
+    Row(id=4, name='Lukas', score=0.7, meta='inserted')]
+    """
     assert product.collect() == [Row(id=0, name='Ivan', score=0.5, meta='deleted'),
                                  Row(id=0, name='Ivan', score=0.8, meta='inserted'),
                                  Row(id=1, name='Maria', score=0.6, meta='not_changed'),
@@ -217,6 +242,16 @@ def test_history_product_no_key_nulls(spark_session: SparkSession):
     history_product = HistoryProduct()
 
     product = history_product.get_history_product(df_old, df_new)
+    """
+    My result
+    [Row(id=None, name='Ivan', score=0.5, meta='deleted'),
+    Row(id=None, name='Maria', score=None, meta='deleted'),
+    Row(id=None, name='Ivan', score=0.8, meta='inserted'),
+    Row(id=None, name='Maria', score=None, meta='inserted'),
+    Row(id=2, name='Evgenii', score=0.4, meta='deleted'),
+    Row(id=3, name='Janus', score=0.8, meta='changed'),
+    Row(id=4, name='Lukas', score=0.7, meta='inserted')]
+    """
     assert product.collect() == [Row(id=None, name='Ivan', score=0.5, meta='deleted'),
                                  Row(id=None, name='Ivan', score=0.8, meta='inserted'),
                                  Row(id=None, name='Maria', score=None, meta='not_changed'),
