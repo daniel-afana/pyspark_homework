@@ -46,6 +46,10 @@ def test_convert_strings_to_types(spark_session: SparkSession):
     transformed = transformer.transform_dataframe(df, expected_schema)
 
     assert transformed.schema == expected_schema
+    """
+    I guess there couldn't be a dataframe with different set of columns for each row.
+    Therefore, this assertion is wrong.
+    """
     assert transformed.toJSON().collect() == [
         '{"id":"1","array":[1,2,3],"date":"2020-02-19","timestamp":"2020-02-19T00:00:00.000+03:00","boolean":true,'
         '"integer":1,"double":0.5,"decimal(38,0)":123534627458685341,"decimal(24,5)":123534627458685341.00000}',
