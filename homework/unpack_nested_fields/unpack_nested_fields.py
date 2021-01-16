@@ -1,4 +1,5 @@
-from pyspark.sql.dataframe import DataFrame
+from pyspark.sql.dataframe import DataFrame, ArrayType, StructType
+from pyspark.sql.functions import col, array, explode
 
 
 class UnpackNestedFields:
@@ -9,6 +10,12 @@ class UnpackNestedFields:
 
     """
 
-    # ToDo implement unpacking of nested fields
     def unpack_nested(self, dataframe: DataFrame):
-        pass
+        columns_to_select = []
+        for field in dataframe.schema.fields:
+            if type(field.dataType) in (ArrayType, StructType):
+                c = explode(field.name).alias('int_array')
+            else:
+                c = col(field.name)
+            columns_to_select.append(c)
+        return dataframe.select(*columns_to_select)
